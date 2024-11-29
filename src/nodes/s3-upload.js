@@ -26,13 +26,15 @@ module.exports = function(RED) {
 
     // Get AWS Creds
     const awsCreds = RED.nodes.getNode(n.aws);
+    node._creds = null;
     console.log("Creds", awsCreds);
     if (awsCreds && awsCreds.credentials) {
         console.log("Creating credentials....");
-        node.creds = new AWS.Credentials({
+        node._creds = new AWS.Credentials({
           accessKeyId: awsCreds.credentials.accessKey, 
           secretAccessKey: awsCreds.credentials.secretAccessKey
         });
+        console.log("Created credentials....", node._creds);
     }
 
     // Store local copies of the node configuration (as defined in the .html)
@@ -72,13 +74,13 @@ module.exports = function(RED) {
             callId: node.metadata.callId
           };
           if (node.metadata.parentCallSid) md.parentCallSid = node.metadata.parentCallSid;
-          console.log("S3 INFO: ", awsCreds.credentials.url, awsCreds.credentials.region, node.creds);
+          console.log("S3 INFO: ", awsCreds.credentials.url, awsCreds.credentials.region, node._creds);
           const s3Stream = new S3Stream(new AWS.S3({
             s3ForcePathStyle: true,
             sslEnabled: false,
             endpoint: awsCreds.credentials.url,
             region: awsCreds.credentials.region,
-            credentials: node.creds
+            credentials: node._creds
           }));
           const upload = s3Stream.upload({
             Bucket: node.bucket,
