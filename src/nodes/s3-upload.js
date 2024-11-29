@@ -71,6 +71,8 @@ module.exports = function(RED) {
           };
           if (node.metadata.parentCallSid) md.parentCallSid = node.metadata.parentCallSid;
           const s3Stream = new S3Stream(new AWS.S3({
+            s3ForcePathStyle: true,
+            sslEnabled: false,
             endpoint: awsCreds.credentials.url,
             region: awsCreds.credentials.region
           }));
