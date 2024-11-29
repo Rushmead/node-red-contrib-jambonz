@@ -32,7 +32,9 @@
     category: 'config',
     credentials: {
       accessKey: {type: 'text'},
-      secretAccessKey: {type: 'text'}
+      secretAccessKey: {type: 'text'},
+      urlType: {},
+      url: {type: 'text'}
     },
     label: function() { 
       if (!this.credentials) return null;
