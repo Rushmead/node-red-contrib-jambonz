@@ -29,7 +29,7 @@ module.exports = function(RED) {
     console.log("Creds", awsCreds);
     if (awsCreds && awsCreds.credentials) {
         console.log("Creating credentials....");
-        node.creds = AWS.Credentials({
+        node.creds = new AWS.Credentials({
           accessKeyId: awsCreds.credentials.accessKey, 
           secretAccessKey: awsCreds.credentials.secretAccessKey
         });
