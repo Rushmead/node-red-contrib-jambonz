@@ -1,13 +1,13 @@
 {
-  "name": "@jambonz/node-red-contrib-jambonz",
-  "version": "2.4.28",
+  "name": "@rushmead/node-red-contrib-jambonz",
+  "version": "2.4.29",
   "description": "Node-RED nodes for jambonz platform",
   "keywords": [
     "node-red"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/jambonz/node-red-contrib-jambonz.git"
+    "url": "git://github.com/Rushmead/node-red-contrib-jambonz.git"
   },
   "engines": {
     "node": ">=14.x"
@@ -58,7 +58,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.701.0",
     "@aws-sdk/lib-storage": "^3.701.0",
-    "aws-sdk": "^2.1665.0",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
