@@ -33,8 +33,8 @@ module.exports = function(RED) {
             accessKeyId: awsCreds.credentials.accessKey,
             secretAccessKey: awsCreds.credentials.secretAccessKey
           },
-          endpoint: awsCreds.credentials.url.length > 0 ? awsCreds.credentials.url : undefined,
-          region: awsCreds.credentials.region.length > 0 ? awsCreds.credentials.region : undefined
+          endpoint: awsCreds.credentials.url,
+          region: awsCreds.credentials.region
         })
     }
 
