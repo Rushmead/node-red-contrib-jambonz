@@ -25,10 +25,20 @@ module.exports = function(RED) {
       RED.nodes.createNode(this, config);
       this.accessKey = config.accessKey;
       this.secretAccessKey = config.secretAccessKey;
+      this.urlType = config.urlType
+      if (this.urlType == 'str'){
+        this.url = config.url;
+      } else {
+        this.url = config.urlType;
+      }
+      this.region = config.region;
     }
   
     RED.nodes.registerType('aws_auth', aws_auth, {
       credentials: {
+        url: {type: 'text'},
+        urlType: {},
+        region: {type: 'text'},
         accessKey: {type: 'text'},
         secretAccessKey: {type: 'text'}
       }

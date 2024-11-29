@@ -1,8 +1,8 @@
 module.exports = function(RED) {
   var WebSocket = require('ws');
   var url = require('url');
-  var AWS = require('aws-sdk') ;
-  var S3Stream = require('s3-upload-stream');
+  var S3 = require('@aws-sdk/client-s3');
+  var storage = require('@aws-sdk/lib-storage');
 
   var serverUpgradeAdded = false;
   function handleServerUpgrade(request, socket, head) {
@@ -26,11 +26,16 @@ module.exports = function(RED) {
 
     // Get AWS Creds
     const awsCreds = RED.nodes.getNode(n.aws);
+    var s3Client;
     if (awsCreds && awsCreds.credentials) {
-        AWS.Credentials({
-          accessKeyId: awsCreds.credentials.accessKey, 
-          secretAccessKey: awsCreds.credentials.secretAccessKey
-        });
+        s3Client = new S3.S3Client({
+          credentials: {
+            accessKeyId: awsCreds.credentials.accessKey,
+            secretAccessKey: awsCreds.credentials.secretAccessKey
+          },
+          endpoint: awsCreds.credentials.url.length > 0 ? awsCreds.credentials.url : undefined,
+          region: awsCreds.credentials.region.length > 0 ? awsCreds.credentials.region : undefined
+        })
     }
 
     // Store local copies of the node configuration (as defined in the .html)
@@ -70,18 +75,20 @@ module.exports = function(RED) {
             callId: node.metadata.callId
           };
           if (node.metadata.parentCallSid) md.parentCallSid = node.metadata.parentCallSid;
-          const s3Stream = new S3Stream(new AWS.S3());
-          const upload = s3Stream.upload({
-            Bucket: node.bucket,
-            Key: `${node.metadata.callSid}.L16`,
-            ACL: 'public-read',
-            ContentType: `audio/L16;rate=${node.metadata.sampleRate};channels=${node.metadata.mixType === 'stereo' ? 2 : 1}`,
-            Metadata: md
+          const upload = new storage.Upload({
+            client: s3Client,
+            params: {
+              Bucket: node.bucket,
+              Key: `${node.metadata.callSid}.L16`,
+              ACL: 'public-read',
+              ContentType: `audio/L16;rate=${node.metadata.sampleRate};channels=${node.metadata.mixType === 'stereo' ? 2 : 1}`,
+              Metadata: md
+            },
           });
           upload.on('error', function(err) {
             node.error(`Error uploading: ${JSON.stringify(err)}`);
           });
-          upload.on('part', function(details) {
+          upload.on('httpUploadProgress', function(details) {
             var msg = {payload : details}
             msg.event = 'partUploaded'
             node.send(msg)
