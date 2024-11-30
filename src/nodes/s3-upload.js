@@ -98,7 +98,7 @@ module.exports = function(RED) {
             node.send(msg)
           });
           upload.on('uploaded', function(details) {
-            var msg = {payload : details}
+            var msg = {payload : {...details, md}}
             msg.event = 'finishedUpload'
             node.send(msg)
           });
